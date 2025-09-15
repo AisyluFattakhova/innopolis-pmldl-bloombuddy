@@ -9,3 +9,14 @@ Plant diseases are a major cause of crop loss worldwide. Early detection and tim
 vention can significantly reduce agricultural losses and increase crop yield. This tool can help
 farmers, gardeners, and agricultural researchers monitor plant health efficiently, even without
 expert knowledge.
+
+## How to Run the Application
+
+Follow these steps to run the project locally:
+
+1. Install dependencies:
+> pip install -r requirements.txt
+
+2. Start the application:
+> python frontend/app.py
+   
