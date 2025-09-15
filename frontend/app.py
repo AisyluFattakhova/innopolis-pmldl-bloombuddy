@@ -10,7 +10,7 @@ def main(page: ft.Page):
 
     page.decoration = ft.BoxDecoration(
         image=ft.DecorationImage(
-            src="img/petals.jpg",
+            src="img\petals.jpg",
             fit=ft.ImageFit.COVER
         )
     )
@@ -218,3 +218,4 @@ def main(page: ft.Page):
 
 
 ft.app(target=main)
+
