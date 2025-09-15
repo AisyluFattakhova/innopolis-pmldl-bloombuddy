@@ -1,5 +1,4 @@
 import flet as ft
-import os.path
 
 def main(page: ft.Page):
     page.bgcolor = ft.Colors.TRANSPARENT
@@ -10,14 +9,13 @@ def main(page: ft.Page):
 
     page.decoration = ft.BoxDecoration(
         image=ft.DecorationImage(
-            src="frontend/img/petals.jpg",
+            src="img/petals.jpg",
             fit=ft.ImageFit.COVER
         )
     )
 
     page.update()
-    os.path.exists("img/petals.jpg")
-
+    
     # Panel 1 - BloomBuddy Chat
     messages = ft.ListView(expand=True, spacing=10, auto_scroll=True)
 
@@ -221,6 +219,7 @@ def main(page: ft.Page):
 
 
 ft.app(target=main)
+
 
 
 
