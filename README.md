@@ -1,5 +1,5 @@
 # innopolis-pmldl-bloombuddy
-## Project Description
+## 💡 Project Idea
 The goal of the project is to develop an AI-powered system that analyzes images of plant
 leaves, detects diseases, and provides actionable recommendations for treatment. The project
 combines Computer Vision for image analysis and Machine Learning / NLP for recommendation
@@ -10,7 +10,7 @@ vention can significantly reduce agricultural losses and increase crop yield. Th
 farmers, gardeners, and agricultural researchers monitor plant health efficiently, even without
 expert knowledge.
 
-## How to Run the Application
+## ⚙️ How to Run the Application
 
 Follow these steps to run the project locally:
 
