@@ -1,5 +1,8 @@
 import flet as ft
+import requests
 
+
+API_URL = "http://127.0.0.1:8000"
 def main(page: ft.Page):
     page.bgcolor = ft.Colors.TRANSPARENT
     page.title = "BloomBuddy"
@@ -15,12 +18,13 @@ def main(page: ft.Page):
     )
 
     page.update()
-    
+
     # Panel 1 - BloomBuddy Chat
     messages = ft.ListView(expand=True, spacing=10, auto_scroll=True)
 
     def send_message(e):
         if user_input.value.strip() != "":
+            user_msg = user_input.value.strip()
             # User's message
             messages.controls.append(
                 ft.Row(
@@ -36,13 +40,21 @@ def main(page: ft.Page):
                     alignment=ft.MainAxisAlignment.END,
                 )
             )
+            
+            # Отправляем сообщение на backend API
+            try:
+                response = requests.post(f"{API_URL}/chat/message", json={"message": user_msg})
+                reply = response.json().get("reply", "No response")
+            except Exception as ex:
+                reply = f"Error: {ex}"
+
 
             # Placeholder bot reply
             messages.controls.append(
                 ft.Row(
                     [
                         ft.Container(
-                            ft.Text("Message accepted 🌱", color=TEXT_COLOR),
+                            ft.Text(reply, color=TEXT_COLOR),
                             bgcolor="#fff59d",
                             border_radius=10,
                             padding=10,
@@ -219,9 +231,3 @@ def main(page: ft.Page):
 
 
 ft.app(target=main)
-
-
-
-
-
-
