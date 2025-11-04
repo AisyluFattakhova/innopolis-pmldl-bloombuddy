@@ -22,33 +22,33 @@ expert knowledge.
 
 ### 📦 Stage 0: Datasets
 - ✅ Collect and organize datasets  
-- 🟡 Perform preprocessing (resizing, normalization, cleaning)  
-- 🟡 Explore datasets and visualize examples  
-- 🟡 Split data into training, validation, and testing sets  
+- ✅ Perform preprocessing (resizing, normalization, cleaning)  
+- ✅ Explore datasets and visualize examples  
+- ✅ Split data into training, validation, and testing sets  
 
-### 🔜 Stage 1: Core Functionality (MVP)
-- 🔜 Basic image classification of healthy vs. diseased leaves  
-- 🔜 Web interface to upload leaf images  
-- 🔜 Display predicted disease with confidence score  
+### 🟡 Stage 1: Core Functionality (MVP)
+- 🟡 Basic image classification of healthy vs. diseased leaves  
+- 🟡 Web interface to upload leaf images  
+- 🟡 Display predicted disease with confidence score  
 
 ### 🚀 Stage 2: Model & Analysis Enhancements
-- 🔜 Experiment with different CV and DL architectures  
-- 🔜 Compare training strategies (from scratch vs. transfer learning)  
-- 🔜 Highlight diseased regions on the leaf (localization/segmentation)  
-- 🔜 Add visual explanations to show how the model makes decisions  
-- 🔜 Apply data augmentation techniques to improve generalization  
-- 🔜 Evaluate results with appropriate metrics and visualizations  
+- 🟡 Experiment with different CV and DL architectures  
+- 🟡 Compare training strategies (from scratch vs. transfer learning)  
+- 🟡 Highlight diseased regions on the leaf (localization/segmentation)  
+- 🟡 Add visual explanations to show how the model makes decisions  
+- 🟡 Apply data augmentation techniques to improve generalization  
+- 🟡 Evaluate results with appropriate metrics and visualizations  
 
 ### 🤖 Stage 3: NLP & Recommendations
-- 🔜 Provide actionable treatment or care recommendations based on predictions  
-- 🔜 Implement a simple assistant (chat/FAQ) to answer user questions  
-- 🔜 Add multi-language support for both interface and recommendations  
+- ✅ Provide actionable treatment or care recommendations based on predictions  
+- 🟡 Implement a simple assistant (chat/FAQ) to answer user questions  
+- 🟡 Add multi-language support for both interface and recommendations  
 
 ### 📲 Stage 4: Deployment & Usability
-- 🔜 Enable batch image upload and processing  
-- 🔜 Export results/reports in CSV or Excel format  
-- 🔜 Optimize the model for faster inference and lighter deployment  
-- 🔜 Explore deployment on mobile or embedded devices  
+- 🟡 Enable batch image upload and processing  
+- 🟡 Export results/reports in CSV or Excel format  
+- 🟡 Optimize the model for faster inference and lighter deployment  
+- 🟡 Explore deployment on mobile or embedded devices  
 
 ## ⚙️ How to Run the Application
 
