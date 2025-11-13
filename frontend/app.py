@@ -30,13 +30,33 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         ft.Container(
-                            ft.Text(user_input.value, color=TEXT_COLOR, no_wrap=False),
+                            content=ft.Stack(
+                                [
+                                    ft.Text(
+                                        user_input.value + "\n\n",
+                                        color=TEXT_COLOR,
+                                        no_wrap=False,
+                                        selectable=True,
+                                    ),
+                                    ft.IconButton(
+                                        icon=ft.Icons.COPY,
+                                        icon_color=TEXT_COLOR,
+                                        icon_size=12,
+                                        tooltip="Copy",
+                                        on_click=lambda e, msg=user_input.value: page.set_clipboard(msg),
+                                        style=ft.ButtonStyle(padding=0),
+                                        right=0, 
+                                        bottom=0,  
+                                    ),
+                                ]
+                            ),
                             bgcolor="#94e48f",
                             border_radius=10,
                             padding=10,
                             margin=5,
                             width=450,
                         )
+
                     ],
                     alignment=ft.MainAxisAlignment.END,
                 )
@@ -55,13 +75,33 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         ft.Container(
-                            ft.Text(reply, color=TEXT_COLOR, no_wrap=False),
+                            content=ft.Stack(
+                                [
+                                    ft.Text(
+                                        reply + "\n\n",
+                                        color=TEXT_COLOR,
+                                        no_wrap=False,
+                                        selectable=True,
+                                    ),
+                                    ft.IconButton(
+                                        icon=ft.Icons.COPY,
+                                        icon_color=TEXT_COLOR,
+                                        icon_size=12,
+                                        tooltip="Copy",
+                                        on_click=lambda e, msg=reply: page.set_clipboard(msg),
+                                        style=ft.ButtonStyle(padding=0),
+                                        right=2,
+                                        bottom=2,
+                                    ),
+                                ]
+                            ),
                             bgcolor="#fff59d",
                             border_radius=10,
                             padding=10,
                             margin=5,
                             width=450,
                         )
+
                     ],
                     alignment=ft.MainAxisAlignment.START,
                 )
@@ -76,6 +116,7 @@ def main(page: ft.Page):
         bgcolor="white",
         border_radius=10,
         color=TEXT_COLOR,
+        on_submit=send_message,
     )
 
     chat_tab = ft.Column(
