@@ -12,7 +12,7 @@ def main(page: ft.Page):
 
     page.decoration = ft.BoxDecoration(
         image=ft.DecorationImage(
-            src="img/petals.jpg",
+            src="img/white.png",
             fit=ft.ImageFit.COVER
         )
     )
@@ -136,8 +136,31 @@ def main(page: ft.Page):
     )
 
     # Panel 3 - Settings
+    def toggle_theme(e):
+        if theme_switch.value:
+            # Тёмная тема
+            page.decoration = ft.BoxDecoration(
+                image=ft.DecorationImage(
+                    src="img/dark.png",
+                    fit=ft.ImageFit.COVER
+                )
+            )
+        else:
+            # Светлая тема
+            page.decoration = ft.BoxDecoration(
+                image=ft.DecorationImage(
+                    src="img/white.png",
+                    fit=ft.ImageFit.COVER
+                )
+            )
+        page.update()
+
     theme_switch = ft.Switch(
-        label="Dark theme", label_style=ft.TextStyle(color=TEXT_COLOR))
+        label="Dark theme",
+        label_style=ft.TextStyle(color=TEXT_COLOR),
+        on_change=toggle_theme
+    )
+
 
     settings_tab = ft.Column(
         [
@@ -219,8 +242,8 @@ def main(page: ft.Page):
         bgcolor="#c7ffa4",
         width=600,
         margin=ft.margin.symmetric(horizontal=20, vertical=20),
-        padding=10,
-        border_radius=15,
+        padding=15,
+        border_radius=10,
     )
 
     page.add(
