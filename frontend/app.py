@@ -1,7 +1,6 @@
 import flet as ft
 import requests
 
-
 API_URL = "http://127.0.0.1:8000"
 def main(page: ft.Page):
     page.bgcolor = ft.Colors.TRANSPARENT
@@ -162,7 +161,7 @@ def main(page: ft.Page):
                 image_preview.content = ft.Image(src=selected_file_path, width=420, height=240, fit=ft.ImageFit.CONTAIN)
             except Exception:
                 image_preview.content = ft.Text("Preview not available", color=TEXT_COLOR)
-            # TODO: you can add sending file to backend and getting diagnosis here:
+            # TODO:
             # response = requests.post(f"{API_URL}/scan", files={"file": open(selected_file_path, "rb")})
             # diagnosis = response.json().get("diagnosis", "No diagnosis")
             # diagnosis_text.value = "Diagnose: " + diagnosis
@@ -185,59 +184,8 @@ def main(page: ft.Page):
         diagnosis_text.value = "Diagnose:"
         page.update()
 
-    # Top window — upload/preview area (styled like a bot message and centered)
-    upload_box = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Container(  # the "bubble" of preview
-                            content=ft.Stack(
-                                [
-                                    image_preview,  # preview (if any) or empty text
-                                ]
-                            ),
-                            bgcolor="#94e48f",
-                            border_radius=10,
-                            padding=10,
-                            margin=ft.margin.only(top=5, bottom=5),
-                            width=500,
-                            alignment=ft.alignment.center,
-                        )
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                ft.Row(
-                    [
-                        ft.TextButton(
-                            "Select file",
-                            on_click=lambda _: file_picker.pick_files(allow_multiple=False),
-                            style=ft.ButtonStyle(bgcolor="#94e48f", color=TEXT_COLOR),
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                ft.Row(
-                    [
-                        selected_file_text
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-            ],
-            spacing=6,
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        ),
-        bgcolor=None,
-    )
+    
 
-    # Buttons between windows: Clear + cross
-    controls_row = ft.Row(
-        [
-            ft.ElevatedButton("Clear", on_click=clear_scan, icon=ft.Icons.CLEAR),
-        ],
-        alignment=ft.MainAxisAlignment.CENTER,
-    )
 
     # Bottom window — diagnosis text with copy button in the corner
     def copy_diagnosis(e):
@@ -247,26 +195,7 @@ def main(page: ft.Page):
         page.snack_bar = ft.SnackBar(ft.Text("Copied"), open=True)
         page.update()
 
-    diagnosis_box = ft.Container(
-        content=ft.Row(
-            [
-                ft.Text(diagnosis_text.value, color=TEXT_COLOR, selectable=True, expand=True),
-                ft.IconButton(
-                    icon=ft.Icons.COPY,
-                    icon_size=16,
-                    tooltip="Copy diagnosis",
-                    on_click=copy_diagnosis,
-                    style=ft.ButtonStyle(padding=0),
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        ),
-        bgcolor="#fff59d",
-        border_radius=10,
-        padding=8,
-        margin=ft.margin.only(top=8),
-        width=500,
-    )
+    
 
 
     # Now assemble scan_tab (logo + upload_box + controls_row + diagnosis_box)
@@ -313,7 +242,7 @@ def main(page: ft.Page):
                         # File select button and text
                         ft.Column(
                             [
-                                ft.Text("Upload a photo of the plant:", size=16, color=TEXT_COLOR),
+                                ft.Text("Upload a photo of the plant:", color=TEXT_COLOR),
                                 ft.Row(
                                     [
                                         ft.ElevatedButton(
@@ -384,9 +313,9 @@ def main(page: ft.Page):
 
 
 
-    # Panel 3 - Settings
+    # Callback для Dark mode
     def toggle_theme(e):
-        if theme_switch.value:
+        if e.control.value:  # если тумблер включен
             # Dark theme
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
@@ -404,24 +333,132 @@ def main(page: ft.Page):
             )
         page.update()
 
-    theme_switch = ft.Switch(
-        label="Dark theme",
-        label_style=ft.TextStyle(color=TEXT_COLOR),
-        on_change=toggle_theme
-    )
+    # Callback для Large font
+    def toggle_font_size(e):
+        if e.control.value:  # Large font ON
+            font_size_body = 20
+            font_size_label = 19
+            font_size_title = 22
+            button_font_size = 19
+        else:  # Large font OFF
+            font_size_body = 16
+            font_size_label = 15
+            font_size_title = 17
+            button_font_size = 15
 
+        page.theme = ft.Theme(
+            font_family="Ag Single Line/Body Small Strong",
+            text_theme=ft.TextTheme(
+                body_large=ft.TextStyle(size=font_size_body),
+                body_medium=ft.TextStyle(size=font_size_body),
+                body_small=ft.TextStyle(size=font_size_body),
+                title_large=ft.TextStyle(size=font_size_title),
+                title_medium=ft.TextStyle(size=font_size_title),
+                title_small=ft.TextStyle(size=font_size_title),
+                label_large=ft.TextStyle(size=font_size_label),
+                label_medium=ft.TextStyle(size=font_size_label),
+                label_small=ft.TextStyle(size=font_size_label),
+            ),
+        )
+
+        def update_button_font(control):
+            if isinstance(control, ft.ElevatedButton):
+                control.style = ft.ButtonStyle(
+                    bgcolor=control.style.bgcolor if control.style else None,
+                    color=control.style.color if control.style else None,
+                    text_style=ft.TextStyle(size=button_font_size)
+                )
+            if hasattr(control, "content") and isinstance(control.content, (ft.Column, ft.Row)):
+                for c in control.content.controls:
+                    update_button_font(c)
+
+        
+        for tab in [chat_tab, scan_tab, settings_tab]:
+            update_button_font(tab)
+
+        page.update()
+
+
+
+    # Callback for the button About us
+    def open_github(e):
+        import webbrowser
+        webbrowser.open("https://github.com/AisyluFattakhova/innopolis-pmldl-bloombuddy/tree/main")
 
     settings_tab = ft.Column(
         [
-            ft.Text("Settings:", size=16, color=TEXT_COLOR),
-            theme_switch,
-            ft.Text("Font size:", color=TEXT_COLOR),
-            ft.Slider(min=10, max=30, divisions=20, label="{value}"),
+            ft.Row( 
+                [
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                # Dark mode
+                                ft.Row(
+                                    [
+                                        ft.Row(
+                                            [
+                                                ft.Icon(ft.Icons.DARK_MODE, color=TEXT_COLOR),
+                                                ft.Text("Dark mode", color=TEXT_COLOR),
+                                            ],
+                                            spacing=8,
+                                        ),
+                                        ft.Switch(
+                                            value=False,
+                                            on_change=toggle_theme,
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                ),
+                                # Large font
+                                ft.Row(
+                                    [
+                                        ft.Row(
+                                            [
+                                                ft.Icon(ft.Icons.REMOVE_RED_EYE, color=TEXT_COLOR),
+                                                ft.Text("Large font", color=TEXT_COLOR),
+                                            ],
+                                            spacing=8,
+                                        ),
+                                        ft.Switch(
+                                            value=False,
+                                            on_change=toggle_font_size,
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                ),
+                            ],
+                            spacing=15,
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        ),
+                        bgcolor="#fff59d",
+                        border_radius=10,
+                        padding=20,
+                        width=400,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+
+            ft.Container(  
+                ft.ElevatedButton(
+                    "About us",
+                    icon=ft.Icons.INFO,
+                    on_click=open_github,
+                    style=ft.ButtonStyle(
+                        bgcolor="#94e48f",
+                        color=TEXT_COLOR,
+                    ),
+                ),
+                alignment=ft.alignment.center,
+                margin=ft.margin.only(top=10),  
+            ),
         ],
         expand=True,
         alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
+
 
     selected_tab = "chat"
 
@@ -453,7 +490,7 @@ def main(page: ft.Page):
             content=ft.Row(
                 [
                     ft.Icon(icon, size=18, color=TEXT_COLOR),
-                    ft.Text(label, color=TEXT_COLOR, size=14),
+                    ft.Text(label, color=TEXT_COLOR, size=16),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 spacing=8,
