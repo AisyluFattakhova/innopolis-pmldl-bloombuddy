@@ -30,11 +30,12 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         ft.Container(
-                            ft.Text(user_input.value, color=TEXT_COLOR),
+                            ft.Text(user_input.value, color=TEXT_COLOR, no_wrap=False),
                             bgcolor="#94e48f",
                             border_radius=10,
                             padding=10,
                             margin=5,
+                            width=450,
                         )
                     ],
                     alignment=ft.MainAxisAlignment.END,
@@ -54,11 +55,12 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         ft.Container(
-                            ft.Text(reply, color=TEXT_COLOR),
+                            ft.Text(reply, color=TEXT_COLOR, no_wrap=False),
                             bgcolor="#fff59d",
                             border_radius=10,
                             padding=10,
                             margin=5,
+                            width=450,
                         )
                     ],
                     alignment=ft.MainAxisAlignment.START,
