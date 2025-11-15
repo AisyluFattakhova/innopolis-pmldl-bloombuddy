@@ -1,7 +1,7 @@
 [
   {
     "crop": "Apple",
-    "disease": "Apple scab",
+    "disease": "Apple Scab Leaf",
     "symptoms": [
       "olive-green to brown spots on leaves",
       "velvety lesions on fruit",
@@ -35,7 +35,7 @@
   },
   {
     "crop": "Apple",
-    "disease": "Cedar apple rust",
+    "disease": "Apple rust leaf",
     "symptoms": [
       "bright orange-yellow spots on leaves that turn reddish-brown",
       "spore-producing structures (aecia) on undersides of leaves",
@@ -52,7 +52,7 @@
   },
   {
     "crop": "Apple",
-    "disease": "Healthy",
+    "disease": "Apple leaf",
     "symptoms": [
       "vibrant green leaves without spots or discoloration",
       "strong and steady growth",
@@ -69,7 +69,7 @@
   },
   {
     "crop": "Blueberry",
-    "disease": "Healthy",
+    "disease": "Blueberry leaf",
     "symptoms": [
       "lush green foliage",
       "vigorous new shoot growth",
@@ -103,7 +103,7 @@
   },
   {
     "crop": "Cherry (including sour)",
-    "disease": "Healthy",
+    "disease": "Cherry leaf",
     "symptoms": [
       "dark green, glossy leaves",
       "robust branch structure",
@@ -120,7 +120,7 @@
   },
   {
     "crop": "Corn (maize)",
-    "disease": "Cercospora leaf spot Gray leaf spot",
+    "disease": "Corn Gray leaf spot",
     "symptoms": [
       "small, tan, rectangular lesions on leaves, often with dark borders",
       "lesions run parallel to leaf veins",
@@ -137,7 +137,7 @@
   },
   {
     "crop": "Corn (maize)",
-    "disease": "Common rust",
+    "disease": "Corn rust leaf",
     "symptoms": [
       "small, circular to oval, reddish-brown pustules on both leaf surfaces",
       "pustules often rupture, releasing powdery spores",
@@ -154,7 +154,7 @@
   },
   {
     "crop": "Corn (maize)",
-    "disease": "Northern Leaf Blight",
+    "disease": "Corn leaf blight",
     "symptoms": [
       "long, elliptical, cigar-shaped lesions on leaves",
       "lesions are gray-green to tan and can be several inches long",
@@ -171,7 +171,7 @@
   },
   {
     "crop": "Corn (maize)",
-    "disease": "Healthy",
+    "disease": "Corn leaf",
     "symptoms": [
       "tall, upright stalks with broad, green leaves",
       "uniform growth and robust appearance",
@@ -188,7 +188,7 @@
   },
   {
     "crop": "Grape",
-    "disease": "Black rot",
+    "disease": "grape leaf black rot",
     "symptoms": [
       "small, reddish-brown spots on leaves, turning black with age",
       "sunken, black lesions on berries, which shrivel into hard 'mummies'",
@@ -239,7 +239,7 @@
   },
   {
     "crop": "Grape",
-    "disease": "Healthy",
+    "disease": "grape leaf",
     "symptoms": [
       "lush, green, unblemished leaves",
       "strong, vigorous shoot growth",
@@ -290,7 +290,7 @@
   },
   {
     "crop": "Peach",
-    "disease": "Healthy",
+    "disease": "Peach leaf",
     "symptoms": [
       "lush green leaves with no discoloration or holes",
       "strong, upright growth of branches",
@@ -307,7 +307,7 @@
   },
   {
     "crop": "Pepper, bell",
-    "disease": "Bacterial spot",
+    "disease": "Bell_pepper leaf spot",
     "symptoms": [
       "small, dark, water-soaked spots on leaves, often surrounded by a yellow halo",
       "spots may merge and cause leaves to yellow and drop prematurely",
@@ -325,7 +325,7 @@
   },
   {
     "crop": "Pepper, bell",
-    "disease": "Healthy",
+    "disease": "Bell_pepper leaf",
     "symptoms": [
       "vibrant green leaves with no spots or holes",
       "strong, bushy plant growth",
@@ -342,7 +342,7 @@
   },
   {
     "crop": "Potato",
-    "disease": "Early blight",
+    "disease": "Potato leaf early blight",
     "symptoms": [
       "small, dark brown spots with concentric rings (target-like pattern) on older leaves",
       "spots often surrounded by a yellow halo",
@@ -360,7 +360,7 @@
   },
   {
     "crop": "Potato",
-    "disease": "Late blight",
+    "disease": "Potato leaf late blight",
     "symptoms": [
       "large, irregular, water-soaked spots on leaves, often starting at leaf tips or edges",
       "white, fuzzy fungal growth on the underside of leaves (especially in humid conditions)",
@@ -378,7 +378,7 @@
   },
   {
     "crop": "Potato",
-    "disease": "Healthy",
+    "disease": "Potato leaf",
     "symptoms": [
       "lush green foliage with no spots or discoloration",
       "vigorous growth of stems and leaves",
@@ -395,7 +395,7 @@
   },
   {
     "crop": "Raspberry",
-    "disease": "Healthy",
+    "disease": "Raspberry leaf",
     "symptoms": [
       "vigorous canes with healthy green leaves",
       "no visible spots, wilting, or discoloration on foliage",
@@ -412,7 +412,7 @@
   },
   {
     "crop": "Soybean",
-    "disease": "Healthy",
+    "disease": "Soyabean leaf",
     "symptoms": [
       "uniform stand of plants with rich green leaves",
       "strong stem development",
@@ -429,7 +429,7 @@
   },
   {
     "crop": "Squash",
-    "disease": "Powdery mildew",
+    "disease": "Squash Powdery mildew leaf",
     "symptoms": [
       "white, powdery spots on upper and lower surfaces of leaves and stems",
       "spots may merge, covering entire leaves",
@@ -465,7 +465,7 @@
   },
   {
     "crop": "Strawberry",
-    "disease": "Healthy",
+    "disease": "Strawberry leaf",
     "symptoms": [
       "lush, green, unblemished leaves",
       "vigorous runner and crown development",
@@ -482,7 +482,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Bacterial spot",
+    "disease": "Tomato leaf bacterial spot",
     "symptoms": [
       "small, dark, water-soaked spots on leaves, often surrounded by a yellow halo",
       "spots may merge and cause leaves to yellow and drop prematurely",
@@ -500,7 +500,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Early blight",
+    "disease": "Tomato Early blight leaf",
     "symptoms": [
       "small, dark brown spots with concentric rings (target-like pattern) on older leaves",
       "spots often surrounded by a yellow halo",
@@ -518,7 +518,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Late blight",
+    "disease": "Tomato leaf late blight",
     "symptoms": [
       "large, irregular, water-soaked spots on leaves, often starting at leaf tips or edges",
       "white, fuzzy fungal growth on the underside of leaves (especially in humid conditions)",
@@ -536,7 +536,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Leaf Mold",
+    "disease": "Tomato mold leaf",
     "symptoms": [
       "pale green or yellow spots on upper leaf surface",
       "olive-green to brown, velvety fungal growth on undersides of leaves",
@@ -554,7 +554,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Septoria leaf spot",
+    "disease": "Tomato Septoria leaf spot",
     "symptoms": [
       "small, circular spots (1/8-1/4 inch) on leaves, stems, and fruit",
       "spots have dark brown borders and tan/gray centers with tiny black specks (fruiting bodies)",
@@ -572,7 +572,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Spider mites Two-spotted spider mite",
+    "disease": "Tomato two spotted spider mites leaf",
     "symptoms": [
       "tiny yellow or white stippling (dots) on leaves",
       "fine webbing on undersides of leaves and between stems",
@@ -608,7 +608,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Tomato Yellow Leaf Curl Virus",
+    "disease": "Tomato leaf yellow virus",
     "symptoms": [
       "severe upward cupping and yellowing of younger leaves",
       "stunted plant growth",
@@ -625,7 +625,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Tomato mosaic virus",
+    "disease": "Tomato leaf mosaic virus",
     "symptoms": [
       "light and dark green mottled pattern (mosaic) on leaves",
       "leaf distortion, blistering, or curling",
@@ -643,7 +643,7 @@
   },
   {
     "crop": "Tomato",
-    "disease": "Healthy",
+    "disease": "Tomato leaf",
     "symptoms": [
       "lush green leaves with no spots or discoloration",
       "strong, vigorous stem and branch growth",
