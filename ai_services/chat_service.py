@@ -12,7 +12,7 @@ texts = [
 vectorizer = TfidfVectorizer().fit(texts)
 matrix = vectorizer.transform(texts)
 
-def chatbot_reply(user_message: str = None, crop: str = None, disease: str = None):
+def generate_bot_reply(user_message: str = None, crop: str = None, disease: str = None):
     user_message = user_message.lower().strip() if user_message else ""
 
 
