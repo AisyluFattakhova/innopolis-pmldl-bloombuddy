@@ -1,48 +1,91 @@
 import json
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+import random
+import torch
+from sentence_transformers import SentenceTransformer, util
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
-with open("knowledge_base.json", "r") as f:
+with open("knowledge_base.json", "r", encoding="utf-8") as f:
     DATA = json.load(f)
 
-texts = [
+KB_TEXTS = [
     f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}"
     for item in DATA
 ]
-vectorizer = TfidfVectorizer().fit(texts)
-matrix = vectorizer.transform(texts)
 
-def generate_bot_reply(user_message: str = None, crop: str = None, disease: str = None):
-    user_message = user_message.lower().strip() if user_message else ""
+embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+KB_EMBEDS = embedder.encode(KB_TEXTS, convert_to_tensor=True)
+
+from ollama import Client
+
+ollama = Client()
+LLM_NAME = "mistral"
+
+# 💾 MEMORY FOR DIALOG
+DIALOG_HISTORY = []  # or dict for multi-user
 
 
-    greetings = ["hi", "hello", "hey", "what's up", "hey there"]
-    thanks = ["thanks", "thank you", "thx"]
-    bye = ["bye", "goodbye", "see you", "bb"]
+def llm_generate(history):
+    prompt = "You are BloomBuddy, a friendly helpful plant assistant.\n"
+    prompt += "Continue the conversation naturally.\n\n"
+    prompt += "\n".join([f"{turn['role'].capitalize()}: {turn['content']}" for turn in history])
+    prompt += "\nAssistant:"
 
-    if any(word in user_message for word in greetings):
-        return "🌿 Hello! I’m BloomBuddy — your plant health assistant. How can I help your plants today?"
-    if any(word in user_message for word in thanks):
-        return "💚 You’re very welcome! Glad to help your plants stay healthy."
-    if any(word in user_message for word in bye):
-        return "👋 Goodbye! Remember to water your plants regularly!"
+       # --- FIX STARTS HERE ---
+    response = ollama.generate(
+        model=LLM_NAME,
+        prompt=prompt,
+        options={ # Pass generation parameters inside the 'options' dictionary
+            "temperature": 0.7,
+            "num_predict": 120 # max_tokens usually maps to num_predict in Ollama
+        }
+    )
+    # --- FIX ENDS HERE ---
+    return response["response"].strip()
 
-    # 🌱 If disease info is known (from CV model)
-    if crop and disease:
+
+
+def generate_bot_reply(user_message: str, disease=None):
+    global DIALOG_HISTORY
+
+    user_message = user_message.strip()
+
+    # store user message
+    DIALOG_HISTORY.append({"role": "user", "content": user_message})
+
+    # If DOCTOR MODE (from YOLO)
+    if disease:
         for item in DATA:
-            if item["crop"].lower() == crop.lower() and item["disease"].lower() == disease.lower():
-                return (
-                    f"It looks like your {item['crop']} has **{item['disease']}**.\n"
-                    + "\n".join(f"- {t}" for t in item["treatment"])
-                    + f"\n\n{item['chat_tip']}"
+            if item["disease"].lower() == disease.lower():
+                bot_text = (
+                    f"Your plant has {item['disease']}. "
+                    f"{' '.join(item['treatment'])}. {item['chat_tip']}"
                 )
 
-    # If it's a text-based query
-    user_vec = vectorizer.transform([user_message])
-    sims = cosine_similarity(user_vec, matrix).flatten()
-    best_match = DATA[sims.argmax()]
-    return (
-        f"It looks like your {best_match['crop']} might have **{best_match['disease']}**.\n"
-        + "\n".join(f"- {t}" for t in best_match['treatment'])
-        + f"\n\n{best_match['chat_tip']}"
-    )
+                DIALOG_HISTORY.append({"role": "assistant", "content": bot_text})
+                return bot_text
+
+    # Otherwise do semantic search
+    query_emb = embedder.encode([user_message], convert_to_tensor=True)
+    sims = util.cos_sim(query_emb, KB_EMBEDS)[0]
+
+    best_idx = int(torch.argmax(sims))
+    best_score = float(sims[best_idx])
+
+    if best_score < 0.25:
+        reply = random.choice([
+            "Could you describe the symptoms in more detail?",
+            "What exactly do you see on the leaves or stems?",
+            "Tell me more — spots? Color change? Rotting?"
+        ])
+        DIALOG_HISTORY.append({"role": "assistant", "content": reply})
+        return reply
+
+    item = DATA[best_idx]
+
+    # Let LLM write a nice human answer
+    bot_text = llm_generate(DIALOG_HISTORY)
+
+    # store in history
+    DIALOG_HISTORY.append({"role": "assistant", "content": bot_text})
+
+    return bot_text

@@ -69,7 +69,7 @@ async def scan_plant(file: UploadFile = File(...)):
     if label.lower() in healthy_labels:
         return {
             "status": "ok",
-            "result": "Растение здоровое 🌱",
+            "result": "Healthy plant 🌱",
             "confidence": confidence,
             "label": label
         }
@@ -80,11 +80,11 @@ async def scan_plant(file: UploadFile = File(...)):
     parsed_crop, parsed_disease = parse_yolo_label(label)
 
     # Now call generate_bot_reply with the correctly parsed crop and disease
-    treatment_advice = generate_bot_reply(crop=parsed_crop, disease=parsed_disease)
+    treatment_advice = generate_bot_reply("", disease=parsed_disease)
 
     return {
         "status": "ok",
-        "result": f"Обнаружена болезнь: {label}",
+        "result": f"Desease detected: {label}",
         "confidence": confidence,
         "label": label,
         "treatment_advice": treatment_advice
