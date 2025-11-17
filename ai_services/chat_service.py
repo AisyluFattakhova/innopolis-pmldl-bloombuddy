@@ -1,76 +1,71 @@
+from sentence_transformers import SentenceTransformer, util
+import torch
 import json
 import random
-import torch
 from ollama import Client
-from sentence_transformers import SentenceTransformer, util
 
+# -------------------
+# LOAD KB
+# -------------------
 with open("knowledge_base.json", "r", encoding="utf-8") as f:
     DATA = json.load(f)
 
 KB_TEXTS = [
-    f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}"
+    f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}" 
     for item in DATA
 ]
 
-embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+# -------------------
+# EMBEDDER LOCAL
+# -------------------
+embedder = SentenceTransformer("models/all-MiniLM-L6-v2")  # локальная модель
 KB_EMBEDS = embedder.encode(KB_TEXTS, convert_to_tensor=True)
 
-
-
+# -------------------
+# LLM
+# -------------------
 ollama = Client()
-LLM_NAME = "mistral"
+LLM_NAME = "mistral:7b-instruct-q4_0"
 
-# 💾 MEMORY FOR DIALOG
+# -------------------
+# MEMORY
+# -------------------
 DIALOG_HISTORY = []
 
-
-# ==========================
-# LLM: RAG RESPONSE BUILDER
-# ==========================
+# -------------------
+# RAG LLM GENERATOR
+# -------------------
 def llm_generate(history, item):
-    """Generate a natural answer strictly based on the retrieved KB item."""
     prompt = (
-        "You are BloomBuddy, a friendly helpful plant assistant.\n"
-        "Use ONLY the following information from the plant disease database.\n"
-        "Do NOT invent new chemicals or treatments.\n\n"
+        "You are BloomBuddy, a friendly plant assistant.\n"
+        "Use ONLY the provided disease info. Do NOT invent treatments.\n\n"
         f"Disease: {item['disease']}\n"
         f"Crop: {item['crop']}\n"
         f"Symptoms: {', '.join(item['symptoms'])}\n"
         f"Treatment: {', '.join(item['treatment'])}\n"
         f"Tip: {item['chat_tip']}\n\n"
-        "Answer the user's question clearly and conversationally.\n\n"
         "Conversation:\n"
     )
-
     prompt += "\n".join([f"{turn['role'].capitalize()}: {turn['content']}" for turn in history])
     prompt += "\nAssistant:"
 
-    response = ollama.generate(
+    resp = ollama.generate(
         model=LLM_NAME,
         prompt=prompt,
-        options={
-            "temperature": 0.5,
-            "num_predict": 150
-        }
+        options={"temperature": 0.4, "num_predict": 150}
     )
+    return resp["response"].strip()
 
-    return response["response"].strip()
 
-
-# ==========================
-# MAIN ENTRYPOINT
-# ==========================
+# -------------------
+# MAIN BOT FUNCTION
+# -------------------
 def generate_bot_reply(user_message: str, disease=None):
     global DIALOG_HISTORY
-
     user_message = user_message.strip()
-
-    # Save user message
     DIALOG_HISTORY.append({"role": "user", "content": user_message})
 
-    # ===============================
-    # 1) DOCTOR MODE (YOLO predicts)
-    # ===============================
+    # 1) DOCTOR MODE
     if disease:
         for item in DATA:
             if item["disease"].lower() == disease.lower():
@@ -78,32 +73,27 @@ def generate_bot_reply(user_message: str, disease=None):
                 DIALOG_HISTORY.append({"role": "assistant", "content": bot_text})
                 return bot_text
 
-    # ===============================
-    # 2) SEMANTIC RETRIEVAL
-    # ===============================
-    query_emb = embedder.encode([user_message], convert_to_tensor=True)
-    sims = util.cos_sim(query_emb, KB_EMBEDS)[0]
+    # 2) SEMANTIC SEARCH
+    query_vec = embedder.encode([user_message], convert_to_tensor=True)
+    sims = util.cos_sim(query_vec, KB_EMBEDS)[0]
 
     best_idx = int(torch.argmax(sims))
     best_score = float(sims[best_idx])
 
-    # If irrelevant user question
+    # Low similarity → ask clarification
     if best_score < 0.25:
         reply = random.choice([
             "Could you describe the symptoms in more detail?",
             "What exactly do you see on the leaves or stems?",
-            "Tell me more — spots? Color change? Rotting?"
+            "Tell me more — spots? Color change? Wilting?"
         ])
         DIALOG_HISTORY.append({"role": "assistant", "content": reply})
         return reply
 
-    # Retrieved KB item
+    # KB item
     item = DATA[best_idx]
 
-    # ===============================
-    # 3) LLM GENERATION USING KB
-    # ===============================
+    # 3) LLM generates human-like answer
     bot_text = llm_generate(DIALOG_HISTORY, item)
-
     DIALOG_HISTORY.append({"role": "assistant", "content": bot_text})
     return bot_text

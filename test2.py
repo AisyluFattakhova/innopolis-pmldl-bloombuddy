@@ -1,5 +1,7 @@
-from ultralytics import YOLO
+from sentence_transformers import SentenceTransformer
 
-model = YOLO("best.pt")
-for cls_id, name in model.names.items():
-    print(cls_id, name)
+model_name = "sentence-transformers/all-MiniLM-L6-v2"
+model = SentenceTransformer(model_name)
+
+# Save it locally
+model.save("models/all-MiniLM-L6-v2")
