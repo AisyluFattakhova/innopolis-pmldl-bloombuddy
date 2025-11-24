@@ -1,18 +1,21 @@
+from sentence_transformers import SentenceTransformer, util
+import torch
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import random
 import re
 
-with open("knowledge_base.json", "r") as f:
+# -------------------
+# LOAD KB
+# -------------------
+with open("knowledge_base.json", "r", encoding="utf-8") as f:
     DATA = json.load(f)
 
-texts = [
-    f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}"
+KB_TEXTS = [
+    f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}" 
     for item in DATA
 ]
-vectorizer = TfidfVectorizer().fit(texts)
-matrix = vectorizer.transform(texts)
 
 
 def generate_bot_reply(
