@@ -143,60 +143,6 @@ def main(page: ft.Page):
 
     # Panel 2 - Scan
 
-    # State objects for the Scan panel
-    selected_file_path = None  # will store the selected file path
-    selected_file_text = ft.Text("No file selected", color=TEXT_COLOR)
-    image_preview = ft.Container(content=ft.Text("", color=TEXT_COLOR), width=420, height=240)
-    diagnosis_text = ft.Text("Diagnose:", color=TEXT_COLOR, selectable=True)
-
-    def pick_file_result(e: ft.FilePickerResultEvent):
-        nonlocal selected_file_path
-        if e.files:
-            # Take the first file
-            f = e.files[0]
-            selected_file_path = f.path  # local file path
-            selected_file_text.value = f"You have chosen: {f.name}"
-            # Show image preview (if it's an image)
-            try:
-                image_preview.content = ft.Image(src=selected_file_path, width=420, height=240, fit=ft.ImageFit.CONTAIN)
-            except Exception:
-                image_preview.content = ft.Text("Preview not available", color=TEXT_COLOR)
-            # TODO:
-            # response = requests.post(f"{API_URL}/scan", files={"file": open(selected_file_path, "rb")})
-            # diagnosis = response.json().get("diagnosis", "No diagnosis")
-            # diagnosis_text.value = "Diagnose: " + diagnosis
-        else:
-            selected_file_path = None
-            selected_file_text.value = "File not selected"
-            image_preview.content = ft.Text("", color=TEXT_COLOR)
-            diagnosis_text.value = "Diagnose:"
-        page.update()
-
-    file_picker = ft.FilePicker(on_result=pick_file_result)
-    page.overlay.append(file_picker)
-
-    # Clear button (removes selected file and diagnosis)
-    def clear_scan(e):
-        nonlocal selected_file_path
-        selected_file_path = None
-        selected_file_text.value = "No file selected"
-        image_preview.content = ft.Text("", color=TEXT_COLOR)
-        diagnosis_text.value = "Diagnose:"
-        page.update()
-
-    
-
-
-    # Bottom window — diagnosis text with copy button in the corner
-    def copy_diagnosis(e):
-        # copy the entire string (including 'Diagnose:')
-        page.set_clipboard(diagnosis_text.value)
-        # can show Snackbar confirmation
-        page.snack_bar = ft.SnackBar(ft.Text("Copied"), open=True)
-        page.update()
-
-    
-
 
     # Now assemble scan_tab (logo + upload_box + controls_row + diagnosis_box)
     # Text field for displaying selected file
@@ -205,26 +151,52 @@ def main(page: ft.Page):
     def pick_file_result(e: ft.FilePickerResultEvent):
         if e.files:
             scan_file_label.value = f"File selected: {e.files[0].name}"
-            # Here you can add code to process the file and display diagnosis
-            diagnosis_text.value = "Diagnose: ..."  # example, can update later
+
+            try:
+                # Getting bytes directly (not via path!)
+                file_path = e.files[0].path
+                with open(file_path, "rb") as f:
+                    file_bytes = f.read()
+
+
+                response = requests.post(
+                    f"{API_URL}/scan/analyze",
+                    files={"file": ("image.jpg", file_bytes, "image/jpeg")}
+                )
+
+                data = response.json()
+
+                if data.get("status") == "error":
+                    diagnosis_text.value = "Diagnose: " + data.get("result")
+                else:
+                    text = data.get("result", "")
+                    if data.get("treatment_advice"):
+                        text += "\n\n" + data.get("treatment_advice") + "\n"
+                    diagnosis_text.value = "Diagnose: " + text
+
+            except Exception as ex:
+                diagnosis_text.value = f"Diagnose: Error — {ex}"
+
         else:
             scan_file_label.value = "No file selected"
-            diagnosis_text.value = "Diagnose: "
+            diagnosis_text.value = "Diagnose: \n"
+
         page.update()
+
 
     file_picker = ft.FilePicker(on_result=pick_file_result)
     page.overlay.append(file_picker)
 
     def clear_scan():
         scan_file_label.value = "No file selected"
-        diagnosis_text.value = "Diagnose: "
+        diagnosis_text.value = "Diagnose: \n"
         page.update()
 
     def copy_diagnosis(e):
         page.set_clipboard(diagnosis_text.value)
 
     # Container for diagnosis text
-    diagnosis_text = ft.Text("Diagnose: ", color=TEXT_COLOR, selectable=True)
+    diagnosis_text = ft.Text("Diagnose: \n", color=TEXT_COLOR, selectable=True)
 
     # The scanner block itself
     scan_tab = ft.Column(
@@ -235,7 +207,7 @@ def main(page: ft.Page):
                     [
                         # Logo in the background
                         ft.Container(
-                            ft.Image(src="img/logo.png", width=150, height=150, opacity=0.2),
+                            ft.Image(src="img/logo.png", width=100, height=100, opacity=0.2),
                             expand=True,
                             alignment=ft.alignment.center,
                         ),
@@ -262,9 +234,9 @@ def main(page: ft.Page):
                 ),
                 bgcolor="#fff59d",
                 border_radius=10,
-                padding=20,
+                padding=10,
                 width=500,
-                height=180,
+                height=120,
                 margin=ft.margin.only(bottom=5),
             ),
 
@@ -287,24 +259,26 @@ def main(page: ft.Page):
 
             # Diagnosis block
             ft.Container(
-                content=ft.Row(
+                content=ft.Stack(
                     [
-                        ft.Text(diagnosis_text.value, color=TEXT_COLOR, selectable=True, expand=True),
+                        diagnosis_text,
                         ft.IconButton(
                             icon=ft.Icons.COPY,
                             icon_size=16,
                             tooltip="Copy diagnosis",
                             on_click=copy_diagnosis,
                             style=ft.ButtonStyle(padding=0),
+                            right=0,
+                            bottom=0,
                         ),
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ]
                 ),
                 bgcolor="#fff59d",
                 border_radius=10,
-                padding=8,
+                padding=10,
                 width=500,
             ),
+
         ],
         expand=True,
         alignment=ft.MainAxisAlignment.CENTER,
@@ -313,9 +287,9 @@ def main(page: ft.Page):
 
 
 
-    # Callback для Dark mode
+    # Callback for Dark mode
     def toggle_theme(e):
-        if e.control.value:  # если тумблер включен
+        if e.control.value:  # if switch is ON
             # Dark theme
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
@@ -333,7 +307,7 @@ def main(page: ft.Page):
             )
         page.update()
 
-    # Callback для Large font
+    # Callback for Large font
     def toggle_font_size(e):
         if e.control.value:  # Large font ON
             font_size_body = 20

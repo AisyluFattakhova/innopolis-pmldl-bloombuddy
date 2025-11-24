@@ -63,13 +63,13 @@ async def scan_plant(file: UploadFile = File(...)):
     label, confidence, box = analyze_plant_image(file_bytes)
 
     if label is None:
-        return {"status": "error", "result": "Не удалось обнаружить растение на фото"}
+        return {"status": "error", "result": "Unable to locate the plant in the photo."}
 
     healthy_labels = ["healthy", "здоровое", "normal"] # Make sure your YOLO model outputs one of these for healthy plants
     if label.lower() in healthy_labels:
         return {
             "status": "ok",
-            "result": "Healthy plant 🌱",
+            "result": "The plant is healthy 🌱",
             "confidence": confidence,
             "label": label
         }
@@ -84,7 +84,7 @@ async def scan_plant(file: UploadFile = File(...)):
 
     return {
         "status": "ok",
-        "result": f"Desease detected: {label}",
+        "result": f"{label}",
         "confidence": confidence,
         "label": label,
         "treatment_advice": treatment_advice
