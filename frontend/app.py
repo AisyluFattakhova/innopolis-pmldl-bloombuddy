@@ -1,5 +1,21 @@
 import flet as ft
 import requests
+import os
+import sys
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+if getattr(sys, 'frozen', False):
+    os.environ["FLET_FORCE_RESTART"] = "0"
+
+
+if getattr(sys, 'frozen', False):
+    BASE_DIR = sys._MEIPASS
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+IMG_DIR = os.path.join(BASE_DIR, "frontend", "img")
+
 
 API_URL = "http://127.0.0.1:8000"
 def main(page: ft.Page):
@@ -11,7 +27,7 @@ def main(page: ft.Page):
 
     page.decoration = ft.BoxDecoration(
         image=ft.DecorationImage(
-            src="img/white.png",
+            src=os.path.join(IMG_DIR, "white.png"),
             fit=ft.ImageFit.COVER
         )
     )
@@ -207,7 +223,7 @@ def main(page: ft.Page):
                     [
                         # Logo in the background
                         ft.Container(
-                            ft.Image(src="img/logo.png", width=100, height=100, opacity=0.2),
+                            ft.Image(src=os.path.join(IMG_DIR, "logo.png"), width=100, height=100, opacity=0.2),
                             expand=True,
                             alignment=ft.alignment.center,
                         ),
@@ -293,7 +309,7 @@ def main(page: ft.Page):
             # Dark theme
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
-                    src="img/dark.png",
+                    src=os.path.join(IMG_DIR, "dark.png"),
                     fit=ft.ImageFit.COVER
                 )
             )
@@ -301,7 +317,7 @@ def main(page: ft.Page):
             # Light theme
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
-                    src="img/white.png",
+                    src=os.path.join(IMG_DIR, "white.png"),
                     fit=ft.ImageFit.COVER
                 )
             )
@@ -513,6 +529,3 @@ def main(page: ft.Page):
             expand=True,
         )
     )
-
-
-ft.app(target=main)
