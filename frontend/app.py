@@ -1,5 +1,14 @@
 import flet as ft
 import requests
+import sys
+import os
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(ROOT_DIR)
+
+from logging_config import setup_logging
+
+logger = setup_logging()
 
 API_URL = "http://127.0.0.1:8000"
 def main(page: ft.Page):
@@ -66,6 +75,7 @@ def main(page: ft.Page):
                 response = requests.post(f"{API_URL}/chat/message", json={"message": user_msg})
                 reply = response.json().get("reply", "No response")
             except Exception as ex:
+                logger.error(f"Error: {ex}")
                 reply = f"Error: {ex}"
 
 
@@ -175,6 +185,7 @@ def main(page: ft.Page):
                     diagnosis_text.value = "Diagnose: " + text
 
             except Exception as ex:
+                logger.error(f"Diagnose: Error — {ex}")
                 diagnosis_text.value = f"Diagnose: Error — {ex}"
 
         else:
@@ -291,6 +302,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         if e.control.value:  # if switch is ON
             # Dark theme
+            logger.info("Mode is changed from light to dark")
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
                     src="frontend/img/dark.png",
@@ -299,6 +311,7 @@ def main(page: ft.Page):
             )
         else:
             # Light theme
+            logger.info("Mode is changed from dark to light")
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
                     src="frontend/img/white.png",
@@ -310,11 +323,13 @@ def main(page: ft.Page):
     # Callback for Large font
     def toggle_font_size(e):
         if e.control.value:  # Large font ON
+            logger.info("Large font is turned ON")
             font_size_body = 20
             font_size_label = 19
             font_size_title = 22
             button_font_size = 19
         else:  # Large font OFF
+            logger.info("Large font is turned OFF")
             font_size_body = 16
             font_size_label = 15
             font_size_title = 17
@@ -336,6 +351,7 @@ def main(page: ft.Page):
         )
 
         def update_button_font(control):
+            
             if isinstance(control, ft.ElevatedButton):
                 control.style = ft.ButtonStyle(
                     bgcolor=control.style.bgcolor if control.style else None,
