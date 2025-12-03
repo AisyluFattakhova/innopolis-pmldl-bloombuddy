@@ -7,7 +7,7 @@
 2. Start deployment:
 ```pyinstaller --clean BloomBuddy.spec ```
 
-3. Find the application in dist folder
+3. Find the application in /dist folder
 
 ## 👥 Contributors
 - Azalia Alisheva
