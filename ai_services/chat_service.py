@@ -5,6 +5,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import random
 import re
+from logging_config import setup_logging
+import logging
+
+
+logger = setup_logging()
 
 
 with open("knowledge_base.json", "r", encoding="utf-8") as f:
@@ -24,6 +29,9 @@ def generate_bot_reply(
         disease: str = None,
         is_first_message: bool = False
 ):
+    logger.info(f"User message received: '{user_message}' "
+                f"(crop={crop}, disease={disease}, first={is_first_message})")
+
     user_message = (user_message or "").lower().strip()
 
     greeting_words = [
@@ -104,7 +112,9 @@ def generate_bot_reply(
             if not reply_parts:
                 reply_parts.append(random.choice(greeting_replies))
 
-            return " ".join(reply_parts)
+            reply_text = " ".join(reply_parts)
+            logger.info(f"Bot reply: {reply_text}")
+            return reply_text
 
     # Mixed message → smalltalk prefix + semantic answer
     prefix_parts = []
@@ -125,7 +135,10 @@ def generate_bot_reply(
                     + "\n".join(f"- {t}" for t in item["treatment"])
                     + f"\n{item['chat_tip']}"
                 )
-                return (prefix + " " + result).strip()
+                reply_text = (prefix + " " + result).strip()
+                logger.info(f"Bot reply: {reply_text}")
+                return reply_text
+
 
         # ---------- TWO-STAGE SEARCH WHEN NO IMAGE ----------
     # If the user did NOT upload a photo → we do 2-step prediction
@@ -166,6 +179,11 @@ def generate_bot_reply(
         )
 
         if prefix:
-            return prefix + "\n" + result
-        return result
+            reply_text = prefix + "\n" + result
+            logger.info(f"Bot reply: {reply_text}")
+            return reply_text
+        reply_text = result
+        logger.info(f"Bot reply: {reply_text}")
+        return reply_text
+
 
