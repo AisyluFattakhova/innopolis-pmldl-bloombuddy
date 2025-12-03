@@ -11,7 +11,7 @@ def main(page: ft.Page):
 
     page.decoration = ft.BoxDecoration(
         image=ft.DecorationImage(
-            src="img/white.png",
+            src="frontend/img/white.png",
             fit=ft.ImageFit.COVER
         )
     )
@@ -207,7 +207,7 @@ def main(page: ft.Page):
                     [
                         # Logo in the background
                         ft.Container(
-                            ft.Image(src="img/logo.png", width=100, height=100, opacity=0.2),
+                            ft.Image(src="frontend/img/logo.png", width=100, height=100, opacity=0.2),
                             expand=True,
                             alignment=ft.alignment.center,
                         ),
@@ -293,7 +293,7 @@ def main(page: ft.Page):
             # Dark theme
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
-                    src="img/dark.png",
+                    src="frontend/img/dark.png",
                     fit=ft.ImageFit.COVER
                 )
             )
@@ -301,7 +301,7 @@ def main(page: ft.Page):
             # Light theme
             page.decoration = ft.BoxDecoration(
                 image=ft.DecorationImage(
-                    src="img/white.png",
+                    src="frontend/img/white.png",
                     fit=ft.ImageFit.COVER
                 )
             )
