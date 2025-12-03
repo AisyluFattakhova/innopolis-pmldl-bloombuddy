@@ -1,21 +1,27 @@
-from sentence_transformers import SentenceTransformer, util
-import torch
 import json
+import sys
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import random
 import re
 
-# -------------------
-# LOAD KB
-# -------------------
-with open("knowledge_base.json", "r", encoding="utf-8") as f:
+if getattr(sys, "frozen", False):
+    BASE_DIR = sys._MEIPASS  # путь к временной папке exe
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+KNOWLEDGE_PATH = os.path.join(BASE_DIR, "knowledge_base.json")
+
+with open(KNOWLEDGE_PATH, "r", encoding="utf-8") as f:
     DATA = json.load(f)
 
-KB_TEXTS = [
-    f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}" 
+texts = [
+    f"{item['crop']} {item['disease']} {' '.join(item['symptoms'])}"
     for item in DATA
 ]
+vectorizer = TfidfVectorizer().fit(texts)
+matrix = vectorizer.transform(texts)
 
 
 def generate_bot_reply(
@@ -127,17 +133,45 @@ def generate_bot_reply(
                 )
                 return (prefix + " " + result).strip()
 
-    user_vec = vectorizer.transform([user_message])
-    sims = cosine_similarity(user_vec, matrix).flatten()
-    best_match = DATA[sims.argmax()]
+        # ---------- TWO-STAGE SEARCH WHEN NO IMAGE ----------
+    # If the user did NOT upload a photo → we do 2-step prediction
+    else:
+        # ---- STEP 1: detect crop ----
+        crops = [item["crop"] for item in DATA]
+        crop_vectorizer = TfidfVectorizer().fit(crops)
+        crop_matrix = crop_vectorizer.transform(crops)
 
-    result = (
-        f"It looks like your plant might have {best_match['disease']}.\n"
-        + "\n".join(f"- {t}" for t in best_match['treatment'])
-        + f"\n{best_match['chat_tip']}"
-    )
+        user_vec_crop = crop_vectorizer.transform([user_message])
+        crop_sims = cosine_similarity(user_vec_crop, crop_matrix).flatten()
+        best_crop = crops[crop_sims.argmax()]
 
-    if prefix:
-        return prefix + "\n" + result
+        # ---- STEP 2: detect disease ONLY within that crop ----
+        items_of_crop = [item for item in DATA if item["crop"].lower() == best_crop.lower()]
 
-    return result
+        # If somehow nothing found (очень маловероятно), fallback
+        if not items_of_crop:
+            items_of_crop = DATA  
+
+        disease_texts = [
+            f"{item['disease']} {' '.join(item['symptoms'])}" 
+            for item in items_of_crop
+        ]
+
+        dis_vectorizer = TfidfVectorizer().fit(disease_texts)
+        dis_matrix = dis_vectorizer.transform(disease_texts)
+
+        user_vec_dis = dis_vectorizer.transform([user_message])
+        dis_sims = cosine_similarity(user_vec_dis, dis_matrix).flatten()
+        best_item = items_of_crop[dis_sims.argmax()]
+
+        # Final answer
+        result = (
+            f"It looks like your {best_item['crop']} might have {best_item['disease']}.\n"
+            + "\n".join(f"- {t}" for t in best_item['treatment'])
+            + f"\n{best_item['chat_tip']}"
+        )
+
+        if prefix:
+            return prefix + "\n" + result
+        return result
+
